@@ -1,7 +1,7 @@
 package ejercicio.personas.controller;
 
 import ejercicio.personas.dto.PersonaDTO;
-import ejercicio.personas.dto.ResponseMessage;
+import ejercicio.personas.dto.ResponseMsgDTO;
 import ejercicio.personas.models.Persona;
 import ejercicio.personas.services.PersonaService;
 import ejercicio.personas.utils.Mapper;
@@ -12,7 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.Set;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +25,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("api")
 public class PersonaController {
 
     @Autowired
@@ -40,7 +45,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @GetMapping("api/personas")
+    @GetMapping("personas")
     public ResponseEntity getAllPersonas() {
         try {
 
@@ -50,7 +55,7 @@ public class PersonaController {
             return new ResponseEntity<List<PersonaDTO>>(personasDTO, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -66,17 +71,17 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @GetMapping("api/persona/{id}")
+    @GetMapping("persona/{id}")
     public ResponseEntity getPersona(@PathVariable("id") long id) {
         try {
             Persona persona = personaService.getPersonaById(id);
             if (persona == null) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona no encontrada"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada"), HttpStatus.NOT_FOUND);
             }
             return new ResponseEntity<Persona>(persona, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -91,7 +96,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @GetMapping("api/persona/{numeroDeDocumento}/{tipoDeDocumento}/{pais}/{sexo}")
+    @GetMapping("persona/{numeroDeDocumento}/{tipoDeDocumento}/{pais}/{sexo}")
     public ResponseEntity getPersonaByParams(@PathVariable("numeroDeDocumento") long numeroDeDocumento,
             @PathVariable("tipoDeDocumento") String tipoDeDocumento,
             @PathVariable("pais") String pais,
@@ -99,12 +104,12 @@ public class PersonaController {
         try {
             Persona persona = personaService.getPersonaByParams(numeroDeDocumento, tipoDeDocumento, pais, sexo);
             if (persona == null) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona no encontrada"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada"), HttpStatus.NOT_FOUND);
             }
             return new ResponseEntity<Persona>(persona, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -118,20 +123,20 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @DeleteMapping("api/persona/{id}")
+    @DeleteMapping("persona/{id}")
     public ResponseEntity deletePersona(@PathVariable("id") long id) {
         try {
 
             Persona persona = personaService.getPersonaById(id);
             if (persona == null) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona no encontrada"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada"), HttpStatus.NOT_FOUND);
             }
 
             personaService.deletePersona(persona);
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona Eliminada"), HttpStatus.OK);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona Eliminada"), HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -141,24 +146,25 @@ public class PersonaController {
                 content = {
                     @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonaDTO.class))}),
-        @ApiResponse(responseCode = "404", description = "Pais no encontrado",
+        @ApiResponse(responseCode = "400", description = "Bad Request",
                 content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @PostMapping("api/persona")
+    @PostMapping("persona")
     public ResponseEntity savePersona(@Valid @RequestBody PersonaDTO personaDTO) {
 
         try {
 
             Persona persona = Mapper.map(personaDTO, Persona.class);
+            persona.setPersonaId(0);
             personaService.savePersona(persona);
             personaDTO = Mapper.map(persona, PersonaDTO.class);
 
             return new ResponseEntity<PersonaDTO>(personaDTO, HttpStatus.OK);
 
-        } catch (Exception e) {
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }  catch (Exception e) {
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -168,28 +174,38 @@ public class PersonaController {
                 content = {
                     @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonaDTO.class))}),
-        @ApiResponse(responseCode = "404", description = "Pais y/o Persona no encontrada",
+        @ApiResponse(responseCode = "400", description = "Bad Request",
                 content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @PutMapping("api/persona")
+    @PutMapping("persona")
     public ResponseEntity updatePersona(@Valid @RequestBody PersonaDTO personaDTO) {
         try {
+ 
+            Persona persona = personaService.getPersonaById(personaDTO.getPersonaId());             
 
-            Persona persona = Mapper.map(personaDTO, Persona.class);
-
-            if (personaService.getPersona(persona) == null) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona no encontrada para actualizar"), HttpStatus.NOT_FOUND);
+            if (persona == null) {
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada para actualizar"), HttpStatus.NOT_FOUND);
             }
-
+            
+            persona.setNombre(personaDTO.getNombre() == null ? persona.getNombre(): personaDTO.getNombre());
+            persona.setApellido(personaDTO.getApellido() == null ? persona.getApellido(): personaDTO.getApellido());
+            persona.setNumeroDeDocumento(personaDTO.getNumeroDeDocumento() == 0 ? persona.getNumeroDeDocumento(): personaDTO.getNumeroDeDocumento());
+            persona.setTipoDeDocumento(personaDTO.getTipoDeDocumento() == null ? persona.getTipoDeDocumento(): personaDTO.getTipoDeDocumento());
+            persona.setPais(personaDTO.getPais() == null ? persona.getPais(): personaDTO.getPais());
+            persona.setSexo(personaDTO.getSexo() == 0 ? persona.getSexo(): personaDTO.getSexo());
+            persona.setFechaDeNacimiento(personaDTO.getFechaDeNacimiento() == null ? persona.getFechaDeNacimiento(): personaDTO.getFechaDeNacimiento());
+            persona.setEmail(personaDTO.getEmail() == null ? persona.getEmail(): personaDTO.getEmail());
+            persona.setTelefono(personaDTO.getTelefono() == null ? persona.getTelefono(): personaDTO.getTelefono());
+            
             personaService.savePersona(persona);
             personaDTO = Mapper.map(persona, PersonaDTO.class);
 
             return new ResponseEntity<PersonaDTO>(personaDTO, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -198,35 +214,39 @@ public class PersonaController {
         @ApiResponse(responseCode = "200", description = "Hijo Asignado a Padre",
                 content = {
                     @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ResponseMessage.class))}),
-        @ApiResponse(responseCode = "404", description = "Pais no encontrado",
+                            schema = @Schema(implementation = ResponseMsgDTO.class))}),
+        @ApiResponse(responseCode = "400", description = "Bad Request",
+                content = @Content),
+        @ApiResponse(responseCode = "403", description = "Ya exsiste una relacion",
+                content = @Content),
+        @ApiResponse(responseCode = "404", description = "Padre y/o Hijo no encontrado",
                 content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @PostMapping("api/personas/{idPadre}/padre/{idHijo}")
+    @PostMapping("personas/{idPadre}/padre/{idHijo}")
     public ResponseEntity setHijoToPadre(@PathVariable("idPadre") long idPadre, @PathVariable("idHijo") long idHijo) {
         try {
             // Validaciones basicas
             if (idHijo == idPadre) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Id de Padre e Hij@ no pueden ser iguales"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Id de Padre e Hij@ no pueden ser iguales"), HttpStatus.FORBIDDEN);
             }
             Persona padre = personaService.getPersonaById(idPadre);
             if (padre == null) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona Padre no encontrado"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona Padre no encontrado"), HttpStatus.NOT_FOUND);
             }
 
             Persona hijo = personaService.getPersonaById(idHijo);
             if (hijo == null) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona Hij@ no encontrad@"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona Hij@ no encontrad@"), HttpStatus.NOT_FOUND);
             }
             // Validacion que hijo no sea abuelo, bisabuelo, etc...
             Persona abuelo = padre.getPadre();
             while (true) {
                 if (abuelo != null) {
                     if (abuelo.equals(hijo)) {
-                        return new ResponseEntity<ResponseMessage>(new ResponseMessage("El Hijo es (por lo menos) Abuelo del padre indicado en la peticion"),
-                                HttpStatus.BAD_REQUEST);
+                        return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("El Hijo es (por lo menos) Abuelo del padre indicado en la peticion"),
+                                HttpStatus.FORBIDDEN);
                     } else {
                         abuelo = abuelo.getPadre();
                     }
@@ -248,10 +268,10 @@ public class PersonaController {
             personaService.savePersona(padre);
 
             String message = "El id " + idPadre + " es Padre del id " + idHijo;
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage(message), HttpStatus.OK);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(message), HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

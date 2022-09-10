@@ -1,6 +1,6 @@
 package ejercicio.personas.controller;
 
-import ejercicio.personas.dto.ResponseMessage;
+import ejercicio.personas.dto.ResponseMsgDTO;
 import ejercicio.personas.models.Persona;
 import ejercicio.personas.services.PersonaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,10 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("api")
 public class RelacionController {
 
     @Autowired
@@ -32,48 +34,48 @@ public class RelacionController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @GetMapping("api/relaciones/{idPersona1}/{idPersona2}")
+    @GetMapping("relaciones/{idPersona1}/{idPersona2}")
     public ResponseEntity getRelacion(@PathVariable("idPersona1") long idPersona1, @PathVariable("idPersona2") long idPersona2) {
         try {
             // Validaciones basicas
             if (idPersona1 == idPersona2) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Id de Persona1 y Persona2 no puede ser iguales"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Id de Persona1 y Persona2 no puede ser iguales"), HttpStatus.BAD_REQUEST);
             }
             Persona persona1 = personaService.getPersonaById(idPersona1);
             if (persona1 == null) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona1 no encontrada"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona1 no encontrada"), HttpStatus.NOT_FOUND);
             }
 
             Persona persona2 = personaService.getPersonaById(idPersona2);
             if (persona2 == null) {         
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona2 no encontrada"), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona2 no encontrada"), HttpStatus.NOT_FOUND);
             }
 
             // son hermanos ?
             if (persona1.getPadre().equals(persona2.getPadre())) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("La relacion es de HERMAN@S"), HttpStatus.OK);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("La relacion es de HERMAN@S"), HttpStatus.OK);
             }
 
             // primos ?
             Persona padre1 = persona1.getPadre();
             Persona padre2 = persona2.getPadre();
             if (padre1.getPadre().equals(padre2.getPadre())) {
-                 return new ResponseEntity<ResponseMessage>(new ResponseMessage("La relacion es de PRIM@S"), HttpStatus.OK);
+                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("La relacion es de PRIM@S"), HttpStatus.OK);
             }
 
-            // sobrino - tio? 
+            // sobrino - tio ? 
             if (padre1.getPadre().equals(padre2)) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage("Persona2 es TI@ de Persona1"), HttpStatus.OK);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona2 es TI@ de Persona1"), HttpStatus.OK);
             }
             if (padre2.getPadre().equals(padre1)) {
-                return new ResponseEntity<ResponseMessage>(new ResponseMessage(" Persona1 es TI@ de Persona2"), HttpStatus.OK);
+                return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(" Persona1 es TI@ de Persona2"), HttpStatus.OK);
             }
 
             // sin relacion
-            return new ResponseEntity<ResponseMessage>(new ResponseMessage("No se encontro relacion entre las dos personas"), HttpStatus.ACCEPTED);
+            return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("No se encontro relacion entre las dos personas"), HttpStatus.ACCEPTED);
 
         } catch (Exception e) {
-            return new ResponseEntity("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ResponseMsgDTO("No se encontro relacion entre las dos personas"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

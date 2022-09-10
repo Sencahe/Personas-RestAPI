@@ -12,25 +12,18 @@ public class PersonaDTO implements Serializable {
 
     private long personaId;
 
-    @NotNull
     private String nombre;
 
-    @NotNull
     private String apellido;
 
-    @NotNull
     private long numeroDeDocumento;
 
-    @NotNull
     private String tipoDeDocumento;
 
-    @NotNull
     private String pais;
 
-    @NotNull
     private char sexo;
 
-    @NotNull
     private LocalDate fechaDeNacimiento;
 
     private String email;

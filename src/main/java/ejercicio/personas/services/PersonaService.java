@@ -17,28 +17,24 @@ public class PersonaService implements IPersonaService {
     @Autowired
     private PersonaRepository personaRepository;
 
-    @Async
     @Override
     @Transactional()
     public List<Persona> getAllPersonas() {
         return (List<Persona>) (List<Persona>) personaRepository.findAll();
     }
 
-    @Async
     @Override
     @Transactional()
     public Persona getPersona(Persona persona) {
         return personaRepository.findById(persona.getPersonaId()).orElse(null);
     }
 
-   
     @Override
     @Transactional()
     public Persona getPersonaById(long id) {
         return personaRepository.findById(id).orElse(null);
     }
 
-    @Async
     @Override
     @Transactional()
     public void savePersona(Persona persona) {
@@ -47,14 +43,12 @@ public class PersonaService implements IPersonaService {
         personaRepository.save(persona);
     }
 
-    @Async
     @Override
     @Transactional()
     public void deletePersona(Persona persona) {
         personaRepository.delete(persona);
     }
 
-    @Async
     @Transactional()
     @Override
     public Persona getPersonaByParams(long numeroDeDocumento, String tipoDeDocumento, String pais, char sexo) {
