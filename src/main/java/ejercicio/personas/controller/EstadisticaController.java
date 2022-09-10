@@ -57,12 +57,12 @@ public class EstadisticaController {
                 if (sexo == 'F') {
                     totalMujeres += 1;
                 }
-                if (pais.equals("ARGENTINA") || pais.startsWith("ARGENTIN")) {
+                if (pais.equals("ARGENTINA")) {
                     totalArgentinos += 1;
                 }
             }
 
-            porcentajeArgentinos = (totalArgentinos * 100) / totalPersonas;
+            porcentajeArgentinos = totalPersonas == 0 ? 0 : (totalArgentinos * 100) / totalPersonas;
 
             EstadisticaDTO estadisticaDTO = new EstadisticaDTO();
             estadisticaDTO.setTotalHombres(totalHombres);

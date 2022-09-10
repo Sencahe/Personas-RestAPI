@@ -12,10 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.Set;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -189,6 +186,7 @@ public class PersonaController {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada para actualizar"), HttpStatus.NOT_FOUND);
             }
             
+            // Actualizar solo los valores que no esten definidios (o sean nulos) en el request
             persona.setNombre(personaDTO.getNombre() == null ? persona.getNombre(): personaDTO.getNombre());
             persona.setApellido(personaDTO.getApellido() == null ? persona.getApellido(): personaDTO.getApellido());
             persona.setNumeroDeDocumento(personaDTO.getNumeroDeDocumento() == 0 ? persona.getNumeroDeDocumento(): personaDTO.getNumeroDeDocumento());
