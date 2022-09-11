@@ -64,6 +64,7 @@ public class RelacionController {
             }
 
             // sobrino - tio ? 
+            // Si el padre del padre (abuelo) de persona1 es igual a al padre de persona2, persona2 es tio de persona1 y viceversa
             if (padre1.getPadre().equals(padre2)) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona2 es TI@ de Persona1"), HttpStatus.OK);
             }

@@ -20,6 +20,7 @@ import ejercicio.personas.annotations.MayoriaDeEdad;
 import ejercicio.personas.annotations.NroDocumentoCorrecto;
 import ejercicio.personas.annotations.SexoCorrecto;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Set;
 import javax.persistence.OneToMany;
 
@@ -71,6 +72,10 @@ public class Persona implements Serializable {
     private String email;
 
     private String telefono;
+    
+    private Date created;
+    
+    private Date updated;
 
     // Self relation
     @ManyToOne

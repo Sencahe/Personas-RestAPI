@@ -1,6 +1,7 @@
 package ejercicio.personas.controller;
 
 import ejercicio.personas.dto.PersonaDTO;
+import ejercicio.personas.dto.PersonaGetDTO;
 import ejercicio.personas.dto.ResponseMsgDTO;
 import ejercicio.personas.entities.Persona;
 import ejercicio.personas.services.PersonaService;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
@@ -62,7 +64,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "200", description = "Persona encontrada",
                 content = {
                     @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persona.class))}),
+                            schema = @Schema(implementation = PersonaGetDTO.class))}),
         @ApiResponse(responseCode = "404", description = "Persona no encontrada",
                 content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
@@ -75,7 +77,8 @@ public class PersonaController {
             if (persona == null) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada"), HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<Persona>(persona, HttpStatus.OK);
+            PersonaGetDTO personaGetDTO = Mapper.map(persona, PersonaGetDTO.class);
+            return new ResponseEntity<PersonaGetDTO>(personaGetDTO, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -87,7 +90,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "200", description = "Persona encontrada",
                 content = {
                     @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persona.class))}),
+                            schema = @Schema(implementation = PersonaGetDTO.class))}),
         @ApiResponse(responseCode = "404", description = "Persona no encontrada",
                 content = @Content),
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
@@ -103,7 +106,8 @@ public class PersonaController {
             if (persona == null) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada"), HttpStatus.NOT_FOUND);
             }
-            return new ResponseEntity<Persona>(persona, HttpStatus.OK);
+            PersonaGetDTO personaGetDTO = Mapper.map(persona, PersonaGetDTO.class);
+            return new ResponseEntity<PersonaGetDTO>(personaGetDTO, HttpStatus.OK);
 
         } catch (Exception e) {
             return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -155,6 +159,8 @@ public class PersonaController {
 
             Persona persona = Mapper.map(personaDTO, Persona.class);
             persona.setPersonaId(0);
+            persona.setCreated(new Date());
+            persona.setUpdated(new Date());
             personaService.savePersona(persona);
             personaDTO = Mapper.map(persona, PersonaDTO.class);
 
@@ -196,6 +202,8 @@ public class PersonaController {
             persona.setFechaDeNacimiento(personaDTO.getFechaDeNacimiento() == null ? persona.getFechaDeNacimiento(): personaDTO.getFechaDeNacimiento());
             persona.setEmail(personaDTO.getEmail() == null ? persona.getEmail(): personaDTO.getEmail());
             persona.setTelefono(personaDTO.getTelefono() == null ? persona.getTelefono(): personaDTO.getTelefono());
+            
+            persona.setUpdated(new Date());
             
             personaService.savePersona(persona);
             personaDTO = Mapper.map(persona, PersonaDTO.class);
