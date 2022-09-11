@@ -10,7 +10,7 @@ import javax.validation.Payload;
 @Constraint(validatedBy = {ValidadorEmail.class})
 public @interface EmailCorrecto {
 
-    String message() default "El formal del email ingresado es invalido";
+    String message() default "El formato del email ingresado es invalido";
 
     Class<?>[] groups() default {};
 
