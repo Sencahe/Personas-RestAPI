@@ -1,6 +1,6 @@
 package ejercicio.personas.services;
 
-import ejercicio.personas.models.Persona;
+import ejercicio.personas.entities.Persona;
 import ejercicio.personas.repositories.PersonaRepository;
 import ejercicio.personas.servicesinterfaces.IPersonaService;
 import java.util.List;

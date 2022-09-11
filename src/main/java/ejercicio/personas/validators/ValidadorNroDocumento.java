@@ -1,19 +1,18 @@
 
 package ejercicio.personas.validators;
 
-import ejercicio.personas.annotations.MayoriaDeEdad;
-import ejercicio.personas.annotations.SexoCorrecto;
 import ejercicio.personas.entities.Persona;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import ejercicio.personas.annotations.ContactoRequerido;
+import ejercicio.personas.annotations.NroDocumentoCorrecto;
 
 
-public class ValidadorSexo implements ConstraintValidator<SexoCorrecto, Persona> {
+public class ValidadorNroDocumento implements ConstraintValidator<NroDocumentoCorrecto, Persona> {
 
     @Override
     public boolean isValid(Persona persona, ConstraintValidatorContext cvc) {
-        char sexo = persona.getSexo();
-        return (sexo == 'M' || sexo == 'F' || sexo == 'X');
+        return persona.getNumeroDeDocumento() != 0;
     }
     
 }

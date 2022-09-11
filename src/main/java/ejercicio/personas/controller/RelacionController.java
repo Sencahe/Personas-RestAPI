@@ -1,7 +1,7 @@
 package ejercicio.personas.controller;
 
 import ejercicio.personas.dto.ResponseMsgDTO;
-import ejercicio.personas.models.Persona;
+import ejercicio.personas.entities.Persona;
 import ejercicio.personas.services.PersonaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

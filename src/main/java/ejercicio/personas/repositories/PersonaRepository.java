@@ -1,6 +1,6 @@
 package ejercicio.personas.repositories;
 
-import ejercicio.personas.models.Persona;
+import ejercicio.personas.entities.Persona;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

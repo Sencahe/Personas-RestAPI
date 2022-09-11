@@ -2,7 +2,7 @@
 package ejercicio.personas.validators;
 
 import ejercicio.personas.annotations.MayoriaDeEdad;
-import ejercicio.personas.models.Persona;
+import ejercicio.personas.entities.Persona;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import javax.validation.ConstraintValidator;

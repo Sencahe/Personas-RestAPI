@@ -1,6 +1,6 @@
 package ejercicio.personas.servicesinterfaces;
 
-import ejercicio.personas.models.Persona;
+import ejercicio.personas.entities.Persona;
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 

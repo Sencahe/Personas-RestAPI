@@ -2,14 +2,13 @@ package ejercicio.personas.controller;
 
 import ejercicio.personas.dto.EstadisticaDTO;
 import ejercicio.personas.dto.ResponseMsgDTO;
-import ejercicio.personas.models.Persona;
+import ejercicio.personas.entities.Persona;
 import ejercicio.personas.services.PersonaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import java.text.DecimalFormat;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,8 +25,6 @@ public class EstadisticaController {
     @Autowired
     private PersonaService personaService;
 
-    private static final DecimalFormat df = new DecimalFormat("0.00");
-
     @Operation(summary = "Obtener Estadisticas")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Estadisticas",
@@ -41,11 +38,11 @@ public class EstadisticaController {
     public ResponseEntity getEstadisticas() {
         try {
             List<Persona> personas = personaService.getAllPersonas();
-
-            int totalPersonas = personas.size();
+            
             int totalMujeres = 0;
             int totalHombres = 0;
-            int totalArgentinos = 0;
+            float totalPersonas = personas.size();
+            float totalArgentinos = 0;
             float porcentajeArgentinos = 0;
 
             for (Persona persona : personas) {
@@ -67,7 +64,7 @@ public class EstadisticaController {
             EstadisticaDTO estadisticaDTO = new EstadisticaDTO();
             estadisticaDTO.setTotalHombres(totalHombres);
             estadisticaDTO.setTotalMujeres(totalMujeres);
-            estadisticaDTO.setPorcentajeArgentinos(df.format(porcentajeArgentinos));
+            estadisticaDTO.setPorcentajeArgentinos(String.format("%.2f", porcentajeArgentinos));
 
             return new ResponseEntity<EstadisticaDTO>(estadisticaDTO, HttpStatus.OK);
             

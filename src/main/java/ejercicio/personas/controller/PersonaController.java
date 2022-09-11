@@ -2,7 +2,7 @@ package ejercicio.personas.controller;
 
 import ejercicio.personas.dto.PersonaDTO;
 import ejercicio.personas.dto.ResponseMsgDTO;
-import ejercicio.personas.models.Persona;
+import ejercicio.personas.entities.Persona;
 import ejercicio.personas.services.PersonaService;
 import ejercicio.personas.utils.Mapper;
 import io.swagger.v3.oas.annotations.Operation;

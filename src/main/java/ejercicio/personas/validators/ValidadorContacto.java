@@ -1,7 +1,7 @@
 
 package ejercicio.personas.validators;
 
-import ejercicio.personas.models.Persona;
+import ejercicio.personas.entities.Persona;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import ejercicio.personas.annotations.ContactoRequerido;

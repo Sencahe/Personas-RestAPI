@@ -2,7 +2,6 @@ package ejercicio.personas.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

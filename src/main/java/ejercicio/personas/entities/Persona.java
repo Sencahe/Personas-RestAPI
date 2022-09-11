@@ -1,4 +1,4 @@
-package ejercicio.personas.models;
+package ejercicio.personas.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
@@ -15,7 +15,9 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import ejercicio.personas.annotations.ContactoRequerido;
+import ejercicio.personas.annotations.EmailCorrecto;
 import ejercicio.personas.annotations.MayoriaDeEdad;
+import ejercicio.personas.annotations.NroDocumentoCorrecto;
 import ejercicio.personas.annotations.SexoCorrecto;
 import java.time.LocalDate;
 import java.util.Set;
@@ -29,6 +31,8 @@ import javax.persistence.OneToMany;
 @ContactoRequerido
 @MayoriaDeEdad
 @SexoCorrecto
+@EmailCorrecto
+@NroDocumentoCorrecto
 @Table(
         uniqueConstraints = {
             @UniqueConstraint(columnNames = {"pais", "numeroDeDocumento", "tipoDeDocumento", "sexo"})
