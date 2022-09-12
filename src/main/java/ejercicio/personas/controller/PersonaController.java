@@ -262,6 +262,7 @@ public class PersonaController {
             if (hijo == null) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona Hij@ no encontrad@"), HttpStatus.NOT_FOUND);
             }
+            
             // Validacion que hijo no sea abuelo, bisabuelo, etc...
             Persona abuelo = padre.getPadre();
             while (true) {
