@@ -37,7 +37,7 @@ public class RelacionController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @Cacheable
+    @Cacheable( key="#root.methodName")
     @GetMapping("relaciones/{idPersona1}/{idPersona2}")
     public ResponseEntity getRelacion(@PathVariable("idPersona1") long idPersona1, @PathVariable("idPersona2") long idPersona2) {
         try {
@@ -57,6 +57,8 @@ public class RelacionController {
 
             Persona padre1 = persona1.getPadre();
             Persona padre2 = persona2.getPadre();
+            Persona abuelo1 = padre1.getPadre();
+            Persona abuelo2 = padre2.getPadre();
 
             if (padre1 != null && padre2 != null) {
 
@@ -64,22 +66,24 @@ public class RelacionController {
                 if (padre1.equals(padre2)) {
                     return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("La relacion es de HERMAN@S"), HttpStatus.OK);
                 }
-
-                // primos ?
-                if (padre1.getPadre().equals(padre2.getPadre())) {
-                    return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("La relacion es de PRIM@S"), HttpStatus.OK);
-                }
                 
-                // sobrino - tio ? 
-                // Si el padre del padre (abuelo) de persona1 es igual a al padre de persona2, persona2 es tio de persona1 y viceversa
-                if (padre1.getPadre().equals(padre2)) {
-                    return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona2 es TI@ de Persona1"), HttpStatus.OK);
-                }
-                if (padre2.getPadre().equals(padre1)) {
-                    return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona1 es TI@ de Persona2"), HttpStatus.OK);
+                if (abuelo1 != null && abuelo2 != null) {
+                    
+                    // primos ?
+                    if (abuelo1.equals(abuelo2)) {
+                        return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("La relacion es de PRIM@S"), HttpStatus.OK);
+                    }
+                    // sobrino - tio ? 
+                    // Si el padre del padre (abuelo) de persona1 es igual a al padre de persona2, persona2 es tio de persona1 y viceversa
+                    if (abuelo1.equals(padre2)) {
+                        return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona2 es TI@ de Persona1"), HttpStatus.OK);
+                    }
+                    if (abuelo2.equals(padre1)) {
+                        return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona1 es TI@ de Persona2"), HttpStatus.OK);
+                    }
                 }
             }
-         
+
             // sin relacion
             return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("No se encontro relacion entre las dos personas"), HttpStatus.ACCEPTED);
 

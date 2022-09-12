@@ -48,7 +48,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @Cacheable
+    @Cacheable( key="#root.methodName")
     @GetMapping("personas")
     public ResponseEntity getAllPersonas() {
         try {
@@ -75,7 +75,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @Cacheable("controllersCache")
+    @Cacheable( key="#root.methodName")
     @GetMapping("persona/{id}")
     public ResponseEntity getPersona(@PathVariable("id") long id) {
         try {
@@ -102,7 +102,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @Cacheable
+    @Cacheable( key="#root.methodName")
     @GetMapping("persona/{numeroDeDocumento}/{tipoDeDocumento}/{pais}/{sexo}")
     public ResponseEntity getPersonaByParams(@PathVariable("numeroDeDocumento") long numeroDeDocumento,
             @PathVariable("tipoDeDocumento") String tipoDeDocumento,
@@ -268,7 +268,7 @@ public class PersonaController {
             while (true) {
                 if (abuelo != null) {
                     if (abuelo.equals(hijo)) {
-                        return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Hij@ es (por lo menos) Abuel@ del padre indicado en la peticion"),
+                        return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Hij@ es padre o (por lo menos) abuelo del padre indicado en la peticion"),
                                 HttpStatus.FORBIDDEN);
                     } else {
                         abuelo = abuelo.getPadre();
@@ -290,7 +290,7 @@ public class PersonaController {
             personaService.savePersona(hijo);
             personaService.savePersona(padre);
 
-            String message = "El id " + idPadre + " es Padre del id " + idHijo;
+            String message = "El id " + idPadre + " fue asignado como Padre del id " + idHijo;
             return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(message), HttpStatus.OK);
 
         } catch (Exception e) {

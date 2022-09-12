@@ -37,7 +37,7 @@ public class EstadisticaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody  
-    @Cacheable
+    @Cacheable( key="#root.methodName")
     @GetMapping("estadisticas")
     public ResponseEntity getEstadisticas() {
         try {
