@@ -80,11 +80,11 @@ public class Persona implements Serializable {
     private Date updated;
 
     // Self relation
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "hijos", "padre"})
     private Persona padre;
 
-    @OneToMany(mappedBy = "padre", cascade = {CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "padre", cascade = {CascadeType.PERSIST})
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "hijos", "padre"})
     private Set<Persona> hijos;
     

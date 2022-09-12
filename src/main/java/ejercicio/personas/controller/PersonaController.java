@@ -203,7 +203,6 @@ public class PersonaController {
         try {
 
             Persona persona = personaService.getPersonaById(personaDTO.getPersonaId());
-
             if (persona == null) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada para actualizar"), HttpStatus.NOT_FOUND);
             }
