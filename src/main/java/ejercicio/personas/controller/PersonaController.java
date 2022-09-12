@@ -18,7 +18,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -198,7 +197,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    //@CacheEvict(cacheNames = {"controllersCache"}, allEntries = true)
+    @CacheEvict(cacheNames = {"controllersCache"}, allEntries = true)
     @PutMapping("persona")
     public ResponseEntity updatePersona(@Valid @RequestBody PersonaDTO personaDTO) {
         try {
