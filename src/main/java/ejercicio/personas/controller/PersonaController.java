@@ -207,7 +207,7 @@ public class PersonaController {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada para actualizar"), HttpStatus.NOT_FOUND);
             }
 
-            // Actualizar solo los valores que no esten definidios (o sean nulos) en el request
+            //  Actualizar solo los valores que no esten definidios (o sean nulos) en el request
             persona.setNombre(personaDTO.getNombre() == null ? persona.getNombre() : personaDTO.getNombre());
             persona.setApellido(personaDTO.getApellido() == null ? persona.getApellido() : personaDTO.getApellido());
             persona.setNumeroDeDocumento(personaDTO.getNumeroDeDocumento() == 0 ? persona.getNumeroDeDocumento() : personaDTO.getNumeroDeDocumento());
@@ -267,7 +267,7 @@ public class PersonaController {
             while (true) {
                 if (abuelo != null) {
                     if (abuelo.equals(hijo)) {
-                        return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("El Hijo es (por lo menos) Abuelo del padre indicado en la peticion"),
+                        return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Hij@ es (por lo menos) Abuel@ del padre indicado en la peticion"),
                                 HttpStatus.FORBIDDEN);
                     } else {
                         abuelo = abuelo.getPadre();
