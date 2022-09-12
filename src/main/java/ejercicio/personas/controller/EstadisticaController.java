@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@CacheConfig(cacheNames = "controllersCache")
 @RestController
 @RequestMapping("api")
 public class EstadisticaController {
@@ -33,7 +36,8 @@ public class EstadisticaController {
                             schema = @Schema(implementation = EstadisticaDTO.class))}),
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
-    @ResponseBody
+    @ResponseBody  
+    @Cacheable
     @GetMapping("estadisticas")
     public ResponseEntity getEstadisticas() {
         try {

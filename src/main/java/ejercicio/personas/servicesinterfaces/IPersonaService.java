@@ -2,7 +2,6 @@ package ejercicio.personas.servicesinterfaces;
 
 import ejercicio.personas.entities.Persona;
 import java.util.List;
-import org.springframework.data.jpa.repository.Query;
 
 public interface IPersonaService {
 
@@ -11,7 +10,6 @@ public interface IPersonaService {
     public Persona getPersona(Persona persona);
 
     public Persona getPersonaById(long id);
-
 
     public Persona getPersonaByParams(long numeroDeDocumento,
             String tipoDeDocumento, String pais, char sexo);

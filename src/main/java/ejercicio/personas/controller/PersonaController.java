@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CacheConfig(cacheNames = "controllersCache")
 @RequestMapping("api")
 public class PersonaController {
 
@@ -44,6 +49,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
+    @Cacheable
     @GetMapping("personas")
     public ResponseEntity getAllPersonas() {
         try {
@@ -70,6 +76,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
+    @Cacheable("controllersCache")
     @GetMapping("persona/{id}")
     public ResponseEntity getPersona(@PathVariable("id") long id) {
         try {
@@ -96,6 +103,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
+    @Cacheable
     @GetMapping("persona/{numeroDeDocumento}/{tipoDeDocumento}/{pais}/{sexo}")
     public ResponseEntity getPersonaByParams(@PathVariable("numeroDeDocumento") long numeroDeDocumento,
             @PathVariable("tipoDeDocumento") String tipoDeDocumento,
@@ -124,6 +132,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
+    @CacheEvict(cacheNames = {"controllersCache"}, allEntries = true)
     @DeleteMapping("persona/{id}")
     public ResponseEntity deletePersona(@PathVariable("id") long id) {
         try {
@@ -132,7 +141,14 @@ public class PersonaController {
             if (persona == null) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada"), HttpStatus.NOT_FOUND);
             }
-
+            
+            // elimino la referencia en los hijos
+            Set<Persona> hijos = persona.getHijos();
+            for(Persona hijo: hijos){
+                hijo.setPadre(null);
+                personaService.savePersona(hijo);
+            }
+            // elimino la entidad
             personaService.deletePersona(persona);
             return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona Eliminada"), HttpStatus.OK);
 
@@ -152,11 +168,11 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
+    @CacheEvict(cacheNames = {"controllersCache"}, allEntries = true)
     @PostMapping("persona")
     public ResponseEntity savePersona(@Valid @RequestBody PersonaDTO personaDTO) {
 
         try {
-
             Persona persona = Mapper.map(personaDTO, Persona.class);
             persona.setPersonaId(0);
             persona.setCreated(new Date());
@@ -166,7 +182,7 @@ public class PersonaController {
 
             return new ResponseEntity<PersonaDTO>(personaDTO, HttpStatus.OK);
 
-        }  catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -182,29 +198,30 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
+    //@CacheEvict(cacheNames = {"controllersCache"}, allEntries = true)
     @PutMapping("persona")
     public ResponseEntity updatePersona(@Valid @RequestBody PersonaDTO personaDTO) {
         try {
- 
-            Persona persona = personaService.getPersonaById(personaDTO.getPersonaId());             
+
+            Persona persona = personaService.getPersonaById(personaDTO.getPersonaId());
 
             if (persona == null) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona no encontrada para actualizar"), HttpStatus.NOT_FOUND);
             }
-            
+
             // Actualizar solo los valores que no esten definidios (o sean nulos) en el request
-            persona.setNombre(personaDTO.getNombre() == null ? persona.getNombre(): personaDTO.getNombre());
-            persona.setApellido(personaDTO.getApellido() == null ? persona.getApellido(): personaDTO.getApellido());
-            persona.setNumeroDeDocumento(personaDTO.getNumeroDeDocumento() == 0 ? persona.getNumeroDeDocumento(): personaDTO.getNumeroDeDocumento());
-            persona.setTipoDeDocumento(personaDTO.getTipoDeDocumento() == null ? persona.getTipoDeDocumento(): personaDTO.getTipoDeDocumento());
-            persona.setPais(personaDTO.getPais() == null ? persona.getPais(): personaDTO.getPais());
-            persona.setSexo(personaDTO.getSexo() == 0 ? persona.getSexo(): personaDTO.getSexo());
-            persona.setFechaDeNacimiento(personaDTO.getFechaDeNacimiento() == null ? persona.getFechaDeNacimiento(): personaDTO.getFechaDeNacimiento());
-            persona.setEmail(personaDTO.getEmail() == null ? persona.getEmail(): personaDTO.getEmail());
-            persona.setTelefono(personaDTO.getTelefono() == null ? persona.getTelefono(): personaDTO.getTelefono());
-            
+            persona.setNombre(personaDTO.getNombre() == null ? persona.getNombre() : personaDTO.getNombre());
+            persona.setApellido(personaDTO.getApellido() == null ? persona.getApellido() : personaDTO.getApellido());
+            persona.setNumeroDeDocumento(personaDTO.getNumeroDeDocumento() == 0 ? persona.getNumeroDeDocumento() : personaDTO.getNumeroDeDocumento());
+            persona.setTipoDeDocumento(personaDTO.getTipoDeDocumento() == null ? persona.getTipoDeDocumento() : personaDTO.getTipoDeDocumento());
+            persona.setPais(personaDTO.getPais() == null ? persona.getPais() : personaDTO.getPais());
+            persona.setSexo(personaDTO.getSexo() == 0 ? persona.getSexo() : personaDTO.getSexo());
+            persona.setFechaDeNacimiento(personaDTO.getFechaDeNacimiento() == null ? persona.getFechaDeNacimiento() : personaDTO.getFechaDeNacimiento());
+            persona.setEmail(personaDTO.getEmail() == null ? persona.getEmail() : personaDTO.getEmail());
+            persona.setTelefono(personaDTO.getTelefono() == null ? persona.getTelefono() : personaDTO.getTelefono());
+
             persona.setUpdated(new Date());
-            
+
             personaService.savePersona(persona);
             personaDTO = Mapper.map(persona, PersonaDTO.class);
 
@@ -230,6 +247,7 @@ public class PersonaController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
+    @CacheEvict(cacheNames = {"controllersCache"}, allEntries = true)
     @PostMapping("personas/{idPadre}/padre/{idHijo}")
     public ResponseEntity setHijoToPadre(@PathVariable("idPadre") long idPadre, @PathVariable("idHijo") long idHijo) {
         try {

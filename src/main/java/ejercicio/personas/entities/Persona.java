@@ -22,6 +22,8 @@ import ejercicio.personas.annotations.SexoCorrecto;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 @Getter
@@ -78,11 +80,11 @@ public class Persona implements Serializable {
     private Date updated;
 
     // Self relation
-    @ManyToOne
+    @ManyToOne()
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "hijos", "padre"})
     private Persona padre;
 
-    @OneToMany(mappedBy = "padre")
+    @OneToMany(mappedBy = "padre", cascade = {CascadeType.PERSIST})
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "hijos", "padre"})
     private Set<Persona> hijos;
     
