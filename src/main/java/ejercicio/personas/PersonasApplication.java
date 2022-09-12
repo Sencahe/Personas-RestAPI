@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @SpringBootApplication(exclude = RepositoryRestMvcAutoConfiguration.class)
 public class PersonasApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PersonasApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PersonasApplication.class, args);
+    }
 
 }
