@@ -38,5 +38,5 @@ INSERT INTO PERSONAS (NOMBRE, APELLIDO, NUMERO_DE_DOCUMENTO,TIPO_DE_DOCUMENTO,SE
 			VALUES('Abril','Baez','88888888','CI','F','CHILE','1999-03-13','abaez@gmail.com','99458889', null,current_timestamp,current_timestamp)
 ON CONFLICT DO NOTHING;
 INSERT INTO PERSONAS (NOMBRE, APELLIDO, NUMERO_DE_DOCUMENTO,TIPO_DE_DOCUMENTO,SEXO,PAIS,FECHA_DE_NACIMIENTO,EMAIL,TELEFONO,PADRE_PERSONA_ID,CREATED,UPDATED)
-			VALUES('Carmen','Juarez','34444444','CI','M','BOLIVIA','1989-01-23','cjuarez@gmail.com','55468788', null,current_timestamp,current_timestamp)
+			VALUES('Carmen','Juarez','34444444','CI','F','BOLIVIA','1989-01-23','cjuarez@gmail.com','55468788', null,current_timestamp,current_timestamp)
 ON CONFLICT DO NOTHING;
