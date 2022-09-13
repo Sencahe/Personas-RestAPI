@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,11 +36,10 @@ public class RelacionController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error",
                 content = @Content)})
     @ResponseBody
-    @Cacheable( key="#root.methodName")
     @GetMapping("relaciones/{idPersona1}/{idPersona2}")
     public ResponseEntity getRelacion(@PathVariable("idPersona1") long idPersona1, @PathVariable("idPersona2") long idPersona2) {
         try {
-            // Validaciones basicas
+            // Validaciones de input
             if (idPersona1 == idPersona2) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Id de Persona1 y Persona2 no puede ser iguales"), HttpStatus.BAD_REQUEST);
             }
@@ -54,36 +52,34 @@ public class RelacionController {
             if (persona2 == null) {
                 return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona2 no encontrada"), HttpStatus.NOT_FOUND);
             }
-
+            
             Persona padre1 = persona1.getPadre();
             Persona padre2 = persona2.getPadre();
-            Persona abuelo1 = padre1.getPadre();
-            Persona abuelo2 = padre2.getPadre();
-
             if (padre1 != null && padre2 != null) {
-
                 // son hermanos ?
-                if (padre1.equals(padre2)) {
+                if (padre1.getPersonaId() == padre2.getPersonaId()) {
                     return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("La relacion es de HERMAN@S"), HttpStatus.OK);
                 }
-                
-                if (abuelo1 != null && abuelo2 != null) {
-                    
-                    // primos ?
-                    if (abuelo1.equals(abuelo2)) {
+                Persona abuelo1 = padre1.getPadre();
+                Persona abuelo2 = padre2.getPadre();
+                // primos ?
+                if (abuelo1 != null && abuelo2 != null) { 
+                    if (abuelo1.getPersonaId() == abuelo2.getPersonaId()) {
                         return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("La relacion es de PRIM@S"), HttpStatus.OK);
                     }
-                    // sobrino - tio ? 
-                    // Si el padre del padre (abuelo) de persona1 es igual a al padre de persona2, persona2 es tio de persona1 y viceversa
-                    if (abuelo1.equals(padre2)) {
+                }
+                // sobrino - tio ? 
+                // Si el abuelo de persona1 es igual a al padre de persona2, persona2 es tio de persona1 y viceversa
+                if (abuelo1 != null) {
+                    if (abuelo1.getPersonaId() == padre2.getPersonaId()) {
                         return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona2 es TI@ de Persona1"), HttpStatus.OK);
                     }
-                    if (abuelo2.equals(padre1)) {
+                } else if (abuelo2 != null) {
+                    if (abuelo2.getPersonaId() == padre1.getPersonaId()) {
                         return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("Persona1 es TI@ de Persona2"), HttpStatus.OK);
                     }
                 }
             }
-
             // sin relacion
             return new ResponseEntity<ResponseMsgDTO>(new ResponseMsgDTO("No se encontro relacion entre las dos personas"), HttpStatus.ACCEPTED);
 

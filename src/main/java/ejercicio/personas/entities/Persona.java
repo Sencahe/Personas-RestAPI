@@ -80,7 +80,7 @@ public class Persona implements Serializable {
     private Date updated;
 
     // Self relation
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "hijos", "padre"})
     private Persona padre;
 

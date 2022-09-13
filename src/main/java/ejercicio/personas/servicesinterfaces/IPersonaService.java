@@ -11,10 +11,10 @@ public interface IPersonaService {
 
     public Persona getPersonaById(long id);
 
-    public Persona getPersonaByParams(long numeroDeDocumento,
+    public Persona getPersonaByIdentity(long numeroDeDocumento,
             String tipoDeDocumento, String pais, char sexo);
 
-    public void savePersona(Persona persona);
+    public Persona savePersona(Persona persona);
 
     public void deletePersona(Persona persona);
 }

@@ -13,7 +13,7 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
             + "and UPPER(p.pais) = UPPER(:pais) "
             + "and p.sexo = UPPER(:sexo)",
             nativeQuery = true)
-    public Persona findByParams(@Param("numeroDeDocumento") long numeroDeDocumento,
+    public Persona findByIdentity(@Param("numeroDeDocumento") long numeroDeDocumento,
             @Param("tipoDeDocumento") String tipoDeDocumento,
             @Param("pais") String pais,
             @Param("sexo") char sexo);
